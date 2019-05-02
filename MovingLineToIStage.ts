@@ -38,11 +38,15 @@ class DrawingUtil {
         context.save()
         context.translate(0, -size * sf)
         context.rotate(Math.PI/2 * scale * sif)
-        context.beginPath()
-        context.moveTo(0, 0)
-        context.lineTo(0, size * sf)
-        context.stroke()
+        DrawingUtil.drawVerticalLine(context, 0, size * sf)
         context.restore()
+    }
+
+    static drawVerticalLine(context : CanvasRenderingContext2D, y1 : number, y2 : number) {
+        context.beginPath()
+        context.moveTo(0, y1)
+        context.lineTo(0, y2)
+        context.stroke()
     }
 
     static drawLTINode(context : CanvasRenderingContext2D, i : number, scale : number) {
@@ -54,13 +58,14 @@ class DrawingUtil {
         context.lineWidth = Math.min(w, h) / strokeFactor
         context.lineCap = 'round'
         context.save()
-        context.translate(gap * (i + 1), (h + size) - (h / 2 + size) * sc2)
+        context.translate(gap * (i + 1), (h + size) - (h / 2 + size) * sc1)
+        DrawingUtil.drawVerticalLine(context, -size, size)
         for (var j = 0; j < (lines / 2); j++) {
             const sf : number = 1 - 2 * j
-            const scj : number = ScaleUtil.divideScale(sc2, j, lines)
+            const scj : number = ScaleUtil.divideScale(sc2, j, lines / 2)
             for (var k = 0; k < (lines / 2); k++) {
                 const sif : number = 1 - 2 * k
-                const sck : number = ScaleUtil.divideScale(sc2, j, lines)
+                const sck : number = ScaleUtil.divideScale(scj, k, lines / 2)
                 DrawingUtil.drawLineToI(context, size, sf, sif, sck)
             }
         }
