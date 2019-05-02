@@ -209,3 +209,25 @@ class MovingLineToI {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    mli : MovingLineToI = new MovingLineToI()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.mli.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.mli.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.mli.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
