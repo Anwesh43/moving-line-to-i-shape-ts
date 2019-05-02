@@ -33,6 +33,41 @@ class ScaleUtil {
     }
 }
 
+class DrawingUtil {
+    static drawLineToI(context : CanvasRenderingContext2D, size : number, sf : number, sif : number, scale : number) {
+        context.save()
+        context.translate(0, -size * sf)
+        context.rotate(Math.PI/2 * scale * sif)
+        context.beginPath()
+        context.moveTo(0, 0)
+        context.lineTo(0, size * sf)
+        context.stroke()
+        context.restore()
+    }
+
+    static drawLTINode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        const gap : number = w / (nodes + 1)
+        const size : number = gap / sizeFactor
+        const sc1 : number = ScaleUtil.divideScale(scale, 0, 2)
+        const sc2 : number = ScaleUtil.divideScale(scale, 1, 2)
+        context.strokeStyle = foreColor
+        context.lineWidth = Math.min(w, h) / strokeFactor
+        context.lineCap = 'round'
+        context.save()
+        context.translate(gap * (i + 1), h / 2)
+        for (var j = 0; j < (lines / 2); j++) {
+            const sf : number = 1 - 2 * j
+            const scj : number = ScaleUtil.divideScale(sc2, j, lines)
+            for (var k = 0; k < (lines / 2); k++) {
+                const sif : number = 1 - 2 * k
+                const sck : number = ScaleUtil.divideScale(sc2, j, lines)
+                DrawingUtil.drawLineToI(context, size, sf, sif, sck)
+            }
+        }
+        context.restore()
+    }
+}
+
 class MovingLineToIStage {
 
     canvas : HTMLCanvasElement = document.createElement('canvas')
