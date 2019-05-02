@@ -54,7 +54,7 @@ class DrawingUtil {
         context.lineWidth = Math.min(w, h) / strokeFactor
         context.lineCap = 'round'
         context.save()
-        context.translate(gap * (i + 1), h / 2)
+        context.translate(gap * (i + 1), (h + size) - (h / 2 + size) * sc2)
         for (var j = 0; j < (lines / 2); j++) {
             const sf : number = 1 - 2 * j
             const scj : number = ScaleUtil.divideScale(sc2, j, lines)
@@ -139,5 +139,50 @@ class Animator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class MLINode {
+
+    prev : MLINode
+    next : MLINode
+    state : State = new State()
+
+    constructor(private i : number) {
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < nodes - 1) {
+            this.next = new MLINode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context : CanvasRenderingContext2D) {
+        DrawingUtil.drawLTINode(context, this.i, this.state.scale)
+        if (this.prev) {
+            this.prev.draw(context)
+        }
+    }
+
+    update(cb : Function) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb : Function) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir : number, cb : Function) : MLINode {
+        var curr : MLINode = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
